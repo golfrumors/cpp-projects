@@ -1,114 +1,91 @@
 #include <iostream>
 
-void ioError(int n){
-	n += int('0');
-	std::cout<<"Error: " << char(n) << " is not a valid input\n";
-}
+using namespace std;
 
-void ioError(char t){
-	std::cout<<"Error: " << t << " is not a valid input\n";
-}
+void printBoard(int a[]);
+bool isTwoPlayers();
+bool gameOver(int a[]); //change this fun to a char to check who won
+bool gameTie(int a[]);
 
-void invalidMove(int n){
-	std::cout<<"Error: The move " << n << " is not a valid move\n";
-}
-
-void printBoard(int a[]){
-
-	std::cout<<" " << a[0] << " | " << a[1] << " | " << a[2] <<" \n";
-
-	std::cout<<"-----------\n";
-
-	std::cout<<" " << a[3] << " | " << a[4] << " | " << a[5] <<" \n";
-
-	std::cout<<"-----------\n";
-
-	std::cout<<" " << a[6] << " | " << a[7] << " | " << a[8] <<" \n";
-
-}
-
-bool isTwoPlayers (){
-	bool flag;
-	char tmp;
-
-	do{
-		try{
-			std::cout<<"Are you playing with two players? Y/N: ";
-			std::cin>>tmp;
-
-			if(tmp == 'Y' || tmp == 'N'){
-				break;
-			} else {
-				throw(tmp);
-			}
-
-		} catch (char tmp){ ioError(tmp); }
-	}while(tmp != 'Y' || tmp != 'N');
-
-	(tmp == 'Y') ? flag = true : flag = false;
-
-	return flag;
-}
-
-void validateMove(int a[]){
-	char n;
-	int ia = 0;
-	int l = sizeof(a) / sizeof(*a);
-
-	std::cout << "Please select your move from the avaliable numbers: \n";
-
-	printBoard(a);
-
-	do{
-		try{
-			std::cout << "Input: ";
-			std::cin>>n;
-			int ia = n - '0';
-
-			if(ia >= 1 && ia <= 9){
-
-				bool exists = false;
-
-				for(int i = 0; i < l; i++){
-					if(a[i] == n){
-						exists = true;
-						break;
-					} else {
-						exists = false;
-						invalidMove(n);
-						}
-
-				}
-
-				if(exists){
-					std::cout << "found at : " << std::distance(a, a+n) << std::endl;
-				} else {
-					std::cout << "not found :( ";
-				}
-
-
-			} else {
-
-				throw(ia);
-
-			}
-
-		} catch(int n){ ioError(n); }
-
-	}while(ia < 1 || ia > 9);
-
-}
-
-
-
+// Tic-Tac-Toe driver code
 int main(){
+    int board[9] = {1,2,3,4,5,6,7,8,9};
+    bool twoPlayers = isTwoPlayers();
+    printBoard(board);
 
-	int boardState[] = {1,2,3,4,5,6,7,8,9};
-	bool twoPlayers = isTwoPlayers();
-	validateMove(boardState);
+    return 0;
+}
 
-	printBoard(boardState);
+// Tic-Tac-Toe functions
+void printBoard(int board[]){
+    cout << " " << board[0] << " | " << board[1] << " | " << board[2] << endl;
+    cout << "---+---+---" << endl;
+    cout << " " << board[3] << " | " << board[4] << " | " << board[5] << endl;
+    cout << "---+---+---" << endl;
+    cout << " " << board[6] << " | " << board[7] << " | " << board[8] << endl;
+}
 
+bool isTwoPlayers(){
+    char n;
+    bool twoPlayers = false;
 
-	return 0;
+    do{
+        cout << "Would you like to play against another player? (y/n): ";
+        cin >> n;
+
+        if(n == 'y' || n == 'Y'){
+            twoPlayers = true;
+        } else if(n == 'n' || n == 'N'){
+            twoPlayers = false;
+        } else {
+            cout << "Invalid input. Please try again." << endl;
+        }
+
+    }while(n != 'y' && n != 'Y' && n != 'n' && n != 'N');
+
+    return twoPlayers;
+}
+
+//this function will check if the game is won
+bool gameOver(int a[]){
+    bool won = false;
+    int l = sizeof(a) / sizeof(*a);
+
+    //check for horizontal win
+    for(int i = 0; i < l; i += 3){
+        if(a[i] == a[i+1] && a[i+1] == a[i+2]){
+            won = true;
+            break;
+        }
+    }
+
+    //check for vertical win
+    for(int i = 0; i < 3; i++){
+        if(a[i] == a[i+3] && a[i+3] == a[i+6]){
+            won = true;
+            break;
+        }
+    }
+
+    //check for diagonal win
+    if(a[0] == a[4] && a[4] == a[8] || a[2] == a[4] && a[4] == a[6]){
+        won = true;
+    }
+
+    return won;
+}
+
+//check if game is tied
+bool gameTied(int a[]){
+    bool tied = true;
+    int l = sizeof(a) / sizeof(*a);
+
+    for(int i = 0; i < l; i++){
+        if(a[i] != 'X' && a[i] != 'O'){
+            tied = false;
+            break;
+        }
+    }
+
+    return tied;
 }
