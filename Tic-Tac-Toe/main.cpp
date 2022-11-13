@@ -2,90 +2,98 @@
 
 using namespace std;
 
-void printBoard(int a[]);
-bool isTwoPlayers();
-bool gameOver(int a[]); //change this fun to a char to check who won
-bool gameTie(int a[]);
-
-// Tic-Tac-Toe driver code
-int main(){
-    int board[9] = {1,2,3,4,5,6,7,8,9};
-    bool twoPlayers = isTwoPlayers();
-    printBoard(board);
-
-    return 0;
+void printBoard(char board[3][3]){
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            if(j != 2){
+                cout << " " << board[i][j] << " |";
+            }else{
+                cout << " " << board[i][j];
+            }
+        }
+        cout << endl;
+        if(i != 2){
+            cout << "---+---+---" << endl;
+        }
+    }
 }
 
-// Tic-Tac-Toe functions
-void printBoard(int board[]){
-    cout << " " << board[0] << " | " << board[1] << " | " << board[2] << endl;
-    cout << "---+---+---" << endl;
-    cout << " " << board[3] << " | " << board[4] << " | " << board[5] << endl;
-    cout << "---+---+---" << endl;
-    cout << " " << board[6] << " | " << board[7] << " | " << board[8] << endl;
-}
-
-bool isTwoPlayers(){
-    char n;
-    bool twoPlayers = false;
+bool isTwoPlayer(){
+    char answer;
+    
+    cout << "Do you want to play against another player? (y/n): ";
+    cin >> answer;
 
     do{
-        cout << "Would you like to play against another player? (y/n): ";
-        cin >> n;
-
-        if(n == 'y' || n == 'Y'){
-            twoPlayers = true;
-        } else if(n == 'n' || n == 'N'){
-            twoPlayers = false;
-        } else {
-            cout << "Invalid input. Please try again." << endl;
+        if(answer == 'y' || answer == 'Y'){
+            return true;
+        }else if(answer == 'n' || answer == 'N'){
+            return false;
+        }else{
+            cout << "Invalid input. Please enter 'y' or 'n': ";
+            cin >> answer;
         }
+    }while(answer != 'y' || answer != 'Y' || answer != 'n' || answer != 'N');
 
-    }while(n != 'y' && n != 'Y' && n != 'n' && n != 'N');
-
-    return twoPlayers;
+    return false;
 }
 
-//this function will check if the game is won
-bool gameOver(int a[]){
-    bool won = false;
-    int l = sizeof(a) / sizeof(*a);
-
-    //check for horizontal win
-    for(int i = 0; i < l; i += 3){
-        if(a[i] == a[i+1] && a[i+1] == a[i+2]){
-            won = true;
-            break;
-        }
-    }
-
-    //check for vertical win
+//this function checks if someone won the game
+bool checkWin(char board[3][3]){
+    //check rows
     for(int i = 0; i < 3; i++){
-        if(a[i] == a[i+3] && a[i+3] == a[i+6]){
-            won = true;
-            break;
+        if(board[i][0] == board[i][1] && board[i][1] == board[i][2]){
+            return true;
         }
     }
 
-    //check for diagonal win
-    if(a[0] == a[4] && a[4] == a[8] || a[2] == a[4] && a[4] == a[6]){
-        won = true;
+    //check columns
+    for(int i = 0; i < 3; i++){
+        if(board[0][i] == board[1][i] && board[1][i] == board[2][i]){
+            return true;
+        }
     }
 
-    return won;
+    //check diagonals
+    if(board[0][0] == board[1][1] && board[1][1] == board[2][2]){
+        return true;
+    }else if(board[0][2] == board[1][1] && board[1][1] == board[2][0]){
+        return true;
+    }
+
+    return false;
 }
 
-//check if game is tied
-bool gameTied(int a[]){
-    bool tied = true;
-    int l = sizeof(a) / sizeof(*a);
+void playGamePvP(char board[3][3]){
+    int row, col;
+    char player = 'X';
+    bool isWinner = false;
 
-    for(int i = 0; i < l; i++){
-        if(a[i] != 'X' && a[i] != 'O'){
-            tied = false;
-            break;
+    while(!isWinner){
+        printBoard(board);
+        cout << player << "'s turn. Enter row and column: ";
+        cin >> row >> col;
+
+        if(board[row][col] == ' '){
+            board[row][col] = player;
+            if(player == 'X'){
+                player = 'O';
+            }else{
+                player = 'X';
+            }
+        }else{
+            cout << "That space is already taken. Please try again." << endl;
         }
-    }
 
-    return tied;
+        isWinner = checkWin(board);
+    }
+}
+
+int main(){
+    char board[3][3] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
+    bool twoPlyer = isTwoPlayer();
+    
+    playGamePvP(board);
+
+    return 0;
 }
