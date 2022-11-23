@@ -7,9 +7,10 @@
 
 #include <iostream>
 #include <ctime>
-#include <conio.h>
+#include <curses.h>
 #include <vector>
 #include <stdlib.h>
+#include <stdio.h>
 #include <cassert>
 #include <map>
 #include <limits>
@@ -22,7 +23,7 @@ using namespace std;
 
 template<typename T>
 void pop_front(std::vector<T>& vec){
-    //assert(!vec.empty());
+    assert(!vec.empty());
     vec.erase(vec.begin());
 }
 
